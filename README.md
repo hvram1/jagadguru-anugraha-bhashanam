@@ -7,10 +7,10 @@ Sanskrit verse chanted in them placed on the clock of the recording.
 
 | Page | What it is |
 |---|---|
-| [`index.html`](index.html) | the door — what this is, and the three pages |
+| [`index.html`](index.html) | the door — what this is, and the two pages it opens |
 | [`what-the-jagadgurus-quote.html`](what-the-jagadgurus-quote.html) | ask it for a verse, a chapter or a work; every answer is a timestamp that opens the recording at the chant |
 | [`chanted-and-not-named.html`](chanted-and-not-named.html) | the passages the index could not name — the list of what is worth digitizing next |
-| [`the-note.html`](the-note.html) | the whole measurement read end to end, talk by talk |
+| [`the-note.html`](the-note.html) | the whole measurement read end to end, talk by talk — not linked from the door; it is reached from *the full note* in the quotes page, which is the only place it is wanted |
 
 Four files. No build step, no framework, no data files: each page carries its
 own data inline. Between them they make two off-site requests —
