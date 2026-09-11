@@ -197,6 +197,21 @@ td:last-child,th:last-child{padding-right:0}
   .masthead__in{padding:32px 22px 26px}
   .shell{padding:0 22px}
 }
+/* --- the phone ------------------------------------------------------------
+   Driven at 390x844. Below 900px the rail stops being a sidebar and stacks on
+   top of the note -- and at 390px that is 1968px of talk titles, nearly three
+   screens of navigation before the first word of what they navigate. The
+   filter box stays where it is and the list scrolls inside itself. */
+@media (max-width:620px){
+  .shell{padding:0 16px}
+  .masthead__in{padding:26px 16px 20px}
+  .rail{padding-bottom:14px}
+  .rail__cols{grid-template-columns:1fr; max-height:44vh; overflow-y:auto;
+    overscroll-behavior-y:contain}
+  /* Below 16px Safari zooms the page when the field takes focus, and does not
+     zoom back: filtering the talks would leave the note itself too wide. */
+  .rail__search{font-size:16px; padding:10px 11px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
 </style>
 </head>

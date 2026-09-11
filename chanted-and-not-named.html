@@ -158,8 +158,10 @@ footer p{margin:0 0 8px; max-width:72ch}
   #count{grid-area:2/2; justify-self:end; margin-left:0}
   /* 46vw is 179px here, and it cut `Sundarapandyapuram` in half -- on a
      control whose whole content is the name of a talk. */
+  /* Full width, and 16px because below that Safari zooms the page when the
+     select takes focus and does not zoom back. */
   #talk{grid-area:3/1; grid-column:1/-1; max-width:none; width:100%;
-    padding:11px 11px}
+    font-size:16px; padding:10px 11px}
 
   main{padding:24px 0 56px}
   .item{padding-left:13px}
