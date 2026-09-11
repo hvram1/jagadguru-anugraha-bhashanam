@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Without this the Devanagari renders as mojibake on any server that does
+     not append charset=utf-8 to text/html. GitHub Pages does; not every host
+     does, and a page about Sanskrit must not depend on the server for it. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jagadguru Anugraha Bhāṣaṇam</title>
+<meta name="description" content="Forty-one recorded discourses of the Jagadgurus of Sringeri, with every Sanskrit verse chanted in them placed on the clock of the recording.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* The palette and the type stack are the three pages' own -- notes/v2-shell.html
+   in audio-ingest. This page is the door to them and has no identity of its
+   own to assert; a second one would say it was a different project. */
+:root{
+  --paper:#f7f8fa; --surface:#ffffff; --surface-2:#f1f3f7; --surface-3:#e9edf3;
+  --ink:#16181d; --ink-2:#3d434f; --muted:#5c6270; --faint:#8b93a2;
+  --rule:#dfe3e9; --rule-2:#eaedf2;
+  --accent:#1f4e79; --accent-ink:#1a4268; --accent-soft:#e8eef5; --accent-2:#3d7ab0;
+  --warn-bg:#f3f1e9; --warn-rule:#c9bf9b; --warn-ink:#4a442f;
+  --serif:"Charter","Bitstream Charter","Iowan Old Style","Source Serif 4","Noto Serif",Georgia,"Times New Roman",serif;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono","DejaVu Sans Mono",Menlo,Consolas,monospace;
+  --dev:"Noto Sans Devanagari","Nirmala UI","Kohinoor Devanagari","Devanagari MT","Noto Serif Devanagari","Lohit Devanagari",var(--serif);
+  --wrap:1000px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#101319; --surface:#171b23; --surface-2:#1d222b; --surface-3:#242a35;
+    --ink:#e6e9ef; --ink-2:#c6ccd8; --muted:#99a1b0; --faint:#6f7787;
+    --rule:#262c37; --rule-2:#1f242d;
+    --accent:#7fb0de; --accent-ink:#a8cbef; --accent-soft:#1b2735; --accent-2:#5d92c4;
+    --warn-bg:#221f16; --warn-rule:#5c5233; --warn-ink:#d9cfae;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101319; --surface:#171b23; --surface-2:#1d222b; --surface-3:#242a35;
+  --ink:#e6e9ef; --ink-2:#c6ccd8; --muted:#99a1b0; --faint:#6f7787;
+  --rule:#262c37; --rule-2:#1f242d;
+  --accent:#7fb0de; --accent-ink:#a8cbef; --accent-soft:#1b2735; --accent-2:#5d92c4;
+  --warn-bg:#221f16; --warn-rule:#5c5233; --warn-ink:#d9cfae;
+}
+
+*{box-sizing:border-box}
+body{margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--serif); font-size:17px; line-height:1.6;
+  -webkit-text-size-adjust:100%}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 24px}
+a{color:var(--accent-ink)}
+a:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+.dev{font-family:var(--dev)}
+.num{font-variant-numeric:tabular-nums}
+
+.mast{background:var(--surface); border-bottom:1px solid var(--rule)}
+.mast .wrap{padding-top:40px; padding-bottom:30px}
+.eyebrow{font-family:var(--sans); font-size:11.5px; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--faint); margin:0 0 10px}
+h1{font-size:clamp(30px,5vw,44px); line-height:1.12; margin:0 0 4px;
+  letter-spacing:-.012em; text-wrap:balance; font-weight:600}
+h1 .sa{display:block; font-family:var(--dev); font-size:.62em; font-weight:400;
+  color:var(--muted); letter-spacing:0; margin-top:8px; line-height:1.5}
+.dek{margin:16px 0 0; color:var(--ink-2); max-width:62ch}
+.tally{display:flex; flex-wrap:wrap; gap:0 32px; margin:24px 0 0;
+  font-family:var(--sans); font-size:13px; color:var(--muted)}
+.tally div{margin-bottom:6px}
+.tally b{display:block; font-family:var(--serif); font-size:26px;
+  font-weight:600; color:var(--ink); line-height:1.2}
+
+main{padding:34px 0 20px}
+.cards{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+/* The whole card is the link. A card with a link inside it has two targets
+   and one of them is 8px tall on a phone. */
+a.card{display:flex; flex-direction:column; text-decoration:none; color:inherit;
+  background:var(--surface); border:1px solid var(--rule); border-radius:10px;
+  padding:18px 19px 16px}
+a.card:hover{border-color:var(--accent)}
+.card h2{font-size:21px; font-weight:600; margin:0 0 6px; letter-spacing:-.008em}
+.card p{margin:0 0 14px; color:var(--ink-2); font-size:15.5px}
+.card .foot{margin-top:auto; padding-top:12px; border-top:1px solid var(--rule-2);
+  display:flex; flex-wrap:wrap; gap:4px 16px; align-items:baseline;
+  font-family:var(--sans); font-size:12.5px; color:var(--muted)}
+.card .foot b{font-family:var(--serif); font-size:15px; color:var(--ink);
+  font-weight:600; margin-right:5px}
+.card .go{font-family:var(--sans); font-size:13px; font-weight:600;
+  color:var(--accent-ink); margin-top:12px}
+
+section.prose{margin:40px 0 0}
+section.prose h3{font-family:var(--sans); font-size:11.5px; letter-spacing:.11em;
+  text-transform:uppercase; color:var(--faint); margin:0 0 10px; font-weight:600}
+section.prose p{margin:0 0 12px; color:var(--ink-2); max-width:66ch;
+  font-size:16px}
+.aside{margin-top:26px; background:var(--warn-bg); border:1px solid var(--warn-rule);
+  border-radius:9px; padding:15px 17px; color:var(--warn-ink); font-size:15.5px}
+.aside p{margin:0; max-width:66ch}
+.aside a{color:inherit}
+footer{border-top:1px solid var(--rule); margin-top:40px; padding:24px 0 60px;
+  font-family:var(--sans); font-size:13px; color:var(--muted)}
+footer p{margin:0 0 8px; max-width:70ch}
+
+/* The phone. The three pages this one opens were measured at 390px; so was
+   this one. */
+@media (max-width:620px){
+  body{font-size:16px}
+  .wrap{padding:0 16px}
+  .mast .wrap{padding-top:26px; padding-bottom:20px}
+  .tally{gap:0 22px; margin-top:18px}
+  .tally b{font-size:23px}
+  main{padding:24px 0 10px}
+  .cards{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="mast"><div class="wrap">
+  <p class="eyebrow">The recorded discourses of the Jagadgurus of Sringeri</p>
+  <h1>Jagadguru Anugraha Bhāṣaṇam
+    <span class="sa">जगद्गुरु अनुग्रह भाषणम्</span></h1>
+  <p class="dek">An <i>anugraha bhāṣaṇam</i> is the Jagadguru’s benedictory
+    address, and the Jagadgurus chant in them constantly — a verse of the Gītā,
+    a line of Śaṅkara, a śloka from a Purāṇa, quoted from memory and carried
+    straight on in Tamil. These pages take <b class="num" data-n="talks">41</b>
+    such recordings and place every verse chanted in them on the clock of the
+    recording, so that a verse can be asked for and answered in the
+    Jagadguru’s own voice.</p>
+  <div class="tally">
+    <div><b class="num" data-n="named">240</b>recitations named</div>
+    <div><b class="num" data-n="verses">159</b>distinct verses</div>
+    <div><b class="num" data-n="hours">18.7</b>hours of discourse</div>
+    <div><b class="num" data-n="unnamed">661</b>heard, not yet named</div>
+  </div>
+</div></header>
+
+<main class="wrap">
+  <div class="cards">
+
+    <a class="card" href="what-the-jagadgurus-quote.html">
+      <h2>What the Jagadgurus quote</h2>
+      <p>Ask it for a verse, a chapter or a work. Every answer is a timestamp
+        that opens the recording at the chant. Type <i>Gita 4.34</i>, or
+        <span class="dev">भगवद्गीता</span>, or a line of the verse itself.</p>
+      <div class="foot">
+        <span><b class="num" data-n="named">240</b>recitations</span>
+        <span><b class="num" data-n="verses">159</b>verses</span>
+      </div>
+      <p class="go">Search the recitations →</p>
+    </a>
+
+    <a class="card" href="chanted-and-not-named.html">
+      <h2>Chanted, and not named</h2>
+      <p>The passages the index could not name — chanted, located in time, and
+        matched against nothing, because the texts they come from are not
+        digitized. This is the list of what is worth digitizing next, ranked by
+        how many talks each absence costs.</p>
+      <div class="foot">
+        <span><b class="num" data-n="recurring">19</b>recurring</span>
+        <span><b class="num" data-n="passages">264</b>passages in all</span>
+      </div>
+      <p class="go">See what is missing →</p>
+    </a>
+
+    <a class="card" href="the-note.html">
+      <h2>The note</h2>
+      <p>The whole measurement read end to end, talk by talk: what was named
+        under each recording, what was not, and the working notes on where the
+        method holds and where it does not.</p>
+      <div class="foot">
+        <span><b class="num" data-n="talks">41</b>talks</span>
+        <span><b class="num" data-n="hours">18.7</b>hours</span>
+      </div>
+      <p class="go">Read the note →</p>
+    </a>
+
+  </div>
+
+  <section class="prose">
+    <h3>How the timestamps were made</h3>
+    <p>The recordings are transcribed, and the Sanskrit in them is matched
+      against an index of the texts. A match is then <i>forced-aligned</i>
+      against the audio itself: the timestamp is a span measured against the
+      waveform, not the boundary of a transcript segment, and it is what makes
+      the link land on the first syllable of the chant rather than somewhere
+      near it.</p>
+    <p>What the index cannot name is kept rather than dropped. Three quarters
+      of an <i>anugraha bhāṣaṇam</i> is Tamil; the Sanskrit inside it is a few
+      minutes of chant, and the passages that match nothing are the ones that
+      say which text is missing from the corpus. That list is a page of its
+      own here, and it is the useful half of the result.</p>
+
+    <div class="aside">
+      <p>These pages are a working measurement made from recordings published
+        on the Sringeri maṭha’s public YouTube channel. They are not a
+        publication of the maṭha, and no citation in them carries a scholar’s
+        attestation. Where a citation is wrong, the recording is the authority
+        and the page is not.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>Built from the public recordings. The Devanagari is set in Noto Sans
+    Devanagari; the only other off-site request any of these pages makes is to
+    YouTube, when a timestamp is followed.</p>
+  <p>A companion to the <a href="https://hvram1.github.io/purana-atlas/">Purāṇa
+    Atlas</a>, which does the same for recorded upanyāsams of the Purāṇas,
+    where there is an edition to align against.</p>
+</footer>
+
+</body>
+</html>
