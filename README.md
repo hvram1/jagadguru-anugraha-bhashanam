@@ -48,13 +48,20 @@ It renames the files on the way in, so it repoints the cross-page links and
 then resolves **every** internal link against the files on disk. A rewrite that
 misses is a 404 that only a visitor finds.
 
-Then it reads the counts back out of the published HTML and compares the ones
-that overlap — the quotes page says `240 recitations named` and the note says
-`shown as 240 entries`; both should be the same measurement. Rebuild two pages
-and forget the third and the site contradicts itself in public, with no broken
-link and no error to show for it. That is not hypothetical: the note had sat at
-283 recitations since August while the quotes page had moved to 240 entries,
-and nothing said so until these two were published side by side.
+Then it reads the counts back out of the published HTML and compares every
+place each one is stated — recitations named and the verses they are of,
+recitations not named and the passages those are of, the recurring passages,
+the dhyāna-ślokas. Rebuild two pages and forget the third and the site
+contradicts itself in public, with no broken link and no error to show for it.
+That is not hypothetical: the note had sat at 283 recitations since August
+while the quotes page had moved to 240 entries, and nothing said so until these
+two were published side by side.
+
+Agreeing is not the same as meaning the same thing. The first pages shown at
+Sringeri said 661, 73 and 264 about the unnamed chant — rows with Tamil in
+them, the recurring passages only, and every passage — and each number passed
+this check. So the patterns carry the unit's words: every page now states both
+halves of the result as *recitations of verses* and *recitations of passages*.
 
 The same numbers are then written into `index.html`, which is why its tallies
 carry `data-n="named"` rather than a typed figure. A number on the door that

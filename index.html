@@ -67,6 +67,8 @@ h1 .sa{display:block; font-family:var(--dev); font-size:.62em; font-weight:400;
 .tally div{margin-bottom:6px}
 .tally b{display:block; font-family:var(--serif); font-size:26px;
   font-weight:600; color:var(--ink); line-height:1.2}
+.tally-note{margin:10px 0 0; font-family:var(--sans); font-size:13px;
+  color:var(--muted); max-width:70ch; line-height:1.5}
 
 main{padding:34px 0 20px}
 .cards{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
@@ -127,11 +129,17 @@ footer p{margin:0 0 8px; max-width:70ch}
     recording, so that a verse can be asked for and answered in the
     Jagadguru’s own voice.</p>
   <div class="tally">
-    <div><b class="num" data-n="named">240</b>recitations named</div>
-    <div><b class="num" data-n="verses">159</b>distinct verses</div>
+    <div><b class="num" data-n="named">257</b>recitations named</div>
+    <div><b class="num" data-n="verses">164</b>distinct verses</div>
     <div><b class="num" data-n="hours">18.7</b>hours of discourse</div>
-    <div><b class="num" data-n="unnamed">661</b>heard, not yet named</div>
+    <div><b class="num" data-n="unnamed">206</b>chanted, not yet named</div>
   </div>
+  <p class="tally-note">A <i>recitation</i> is one time a verse was chanted:
+    <span data-n="named">257</span> recitations of
+    <span data-n="verses">164</span> different verses, because some are
+    chanted in more than one talk. Another <span data-n="unnamed">206</span>
+    recitations, of <span data-n="passages">177</span> passages, could not be
+    named. The Tamil and Kannada exposition around them is not counted.</p>
 </div></header>
 
 <main class="wrap">
@@ -143,8 +151,8 @@ footer p{margin:0 0 8px; max-width:70ch}
         that opens the recording at the chant. Type <i>Gita 4.34</i>, or
         <span class="dev">भगवद्गीता</span>, or a line of the verse itself.</p>
       <div class="foot">
-        <span><b class="num" data-n="named">240</b>recitations</span>
-        <span><b class="num" data-n="verses">159</b>verses</span>
+        <span><b class="num" data-n="named">257</b>recitations</span>
+        <span><b class="num" data-n="verses">164</b>verses</span>
       </div>
       <p class="go">Search the recitations →</p>
     </a>
@@ -156,8 +164,8 @@ footer p{margin:0 0 8px; max-width:70ch}
         digitized. This is the list of what is worth digitizing next, ranked by
         how many talks each absence costs.</p>
       <div class="foot">
-        <span><b class="num" data-n="recurring">19</b>recurring</span>
-        <span><b class="num" data-n="passages">264</b>passages in all</span>
+        <span><b class="num" data-n="passages">177</b>passages</span>
+        <span><b class="num" data-n="recurring">7</b>in more than one talk</span>
       </div>
       <p class="go">See what is missing →</p>
     </a>

@@ -38,14 +38,19 @@ allowed to stand.
 
 The second is staleness, and it is the one that matters. The three pages are
 built by three scripts from one measurement, and they print overlapping counts
-of it: the index says `240 recitations named` and `661 heard, not yet named`,
-and the note says `shown as 240 entries` and `A further 661 Sanskrit passages`.
-Rebuild two of them and forget the third and the site contradicts itself in
-public, with no broken link and no error to show for it. That is not
-hypothetical -- the note in the repository next door had sat at 283/226/677
-since August while the index had moved to 299/240/661, and nothing said so.
-So the counts are read back out of the published HTML and compared, and a
-disagreement stops the publish.
+of it: recitations named, the verses they are of, recitations not named, and
+the passages those are of -- each on two or three pages. Rebuild two of them
+and forget the third and the site contradicts itself in public, with no broken
+link and no error to show for it. That is not hypothetical -- the note in the
+repository next door had sat at 283/226/677 since August while the index had
+moved to 299/240/661, and nothing said so. So the counts are read back out of
+the published HTML and compared, and a disagreement stops the publish.
+
+Agreement is not enough on its own, and the maṭha found that out for us: the
+pages once said 661, 73 and 264 about the unnamed chant, every one checked
+and every one right, in three different units. So the patterns carry the
+unit's words, and every page states the unnamed chant as recitations of
+passages, as it states the named as recitations of verses.
 
     ./refresh.py          copy, rewrite the links, verify, report
     ./refresh.py --check  verify what is already here; copy nothing
@@ -160,37 +165,64 @@ def check_links(dst, html):
 def claims(pages):
     """Every number the three pages print that this repo relies on.
 
-    Each entry is one quantity and the two places it is stated. They are read
+    Each entry is one quantity and every place it is stated. They are read
     back out of the published HTML as the strings a reader sees, not parsed
     from some shared source: what is being checked is what the pages claim.
+
+    The unnamed figures are stated on all three pages, in one unit each:
+    recitations (times chanted) and passages (what was chanted). They used to
+    be stated in three different units -- rows on one page, recurring passages
+    on another, all passages in a third tile -- and every one of them agreed
+    with this script while the pages disagreed with each other in front of the
+    maṭha. Comparing the number is only worth anything if the number means the
+    same thing everywhere, so the patterns below carry the unit's words.
     """
     q = pages['what-the-jagadgurus-quote.html']
     u = pages['chanted-and-not-named.html']
     n = pages['the-note.html']
     return [
-        # key          what              first reading                       second reading
-        ('named', 'recitations named',
-         ('quotes', q, r'<b class="num">([\d,]+)</b>recitations named'),
-         ('note', n, r'shown as ([\d,]+) entries')),
-        ('verses', 'distinct verses',
-         ('quotes', q, r'<b class="num">([\d,]+)</b>distinct verses'),
-         ('note', n, r'drawn from ([\d,]+) distinct verses')),
-        ('hours', 'hours of audio',
-         ('quotes', q, r'<b class="num">([\d.]+)</b>hours of discourse'),
-         ('note', n, r'recitations named across ([\d.]+) hours')),
-        ('unnamed', 'heard, not named',
-         ('quotes', q, r'<b class="num">([\d,]+)</b>heard, not yet named'),
-         ('note', n, r'A further ([\d,]+) Sanskrit passages')),
-        ('talks', 'talks',
-         ('quotes', q, r'<p class="dek">([\d,]+) recorded talks'),
-         ('unnamed', u, r'across the ([\d,]+) talks')),
-        # These two are stated once, on the page they belong to, so there is
-        # nothing to compare them against -- they are read only so that
-        # index.html does not have to have them typed into it.
-        ('recurring', 'recurring passages',
-         ('unnamed', u, r'<p class="dek">([\d,]+) Sanskrit passages'), None),
-        ('passages', 'unnamed passages',
-         ('unnamed', u, r'<b>([\d,]+)</b>unnamed passages in all'), None),
+        # key          what                  readings
+        ('named', 'recitations named', [
+            ('quotes', q, r'<b class="num">([\d,]+)</b>recitations named'),
+            ('quotes', q, r'A <i>recitation</i> is one time a verse was chanted: '
+                          r'([\d,]+) recitations'),
+            ('note', n, r'\*\*([\d,]+) recitations named across'),
+            ('unnamed', u, r'which lists the ([\d,]+) recitations')]),
+        ('verses', 'distinct verses', [
+            ('quotes', q, r'<b class="num">([\d,]+)</b>distinct verses'),
+            ('quotes', q, r'recitations of ([\d,]+) different verses'),
+            ('note', n, r'drawn from ([\d,]+) distinct verses')]),
+        ('hours', 'hours of audio', [
+            ('quotes', q, r'<b class="num">([\d.]+)</b>hours of discourse'),
+            ('note', n, r'recitations named across ([\d.]+) hours')]),
+        ('dhyana', 'dhyāna-ślokas named', [
+            ('quotes', q, r'so ([\d,]+) of these recitations are named'),
+            ('unnamed', u, r'request: ([\d,]+) recitations'),
+            ('note', n, r'([\d,]+) of them are dhyāna-ślokas')]),
+        ('invocations', 'closing invocations', [
+            ('quotes', q, r'heard at the end of ([\d,]+) talks'),
+            ('quotes', q, r'पार्वतीपतये हर हर महादेव» closes ([\d,]+) of these'),
+            ('unnamed', u, r'which closes ([\d,]+) of the talks'),
+            ('note', n, r'heard at the end of ([\d,]+) talks')]),
+        ('unnamed', 'recitations not named', [
+            ('quotes', q, r'<b class="num">([\d,]+)</b>chanted, not yet named'),
+            ('quotes', q, r'Another ([\d,]+) recitations'),
+            ('unnamed', u, r'<b>([\d,]+)</b>recitations not yet named'),
+            ('unnamed', u, r'chant, ([\d,]+) times'),
+            ('note', n, r'A further ([\d,]+) recitations of Sanskrit chant')]),
+        ('passages', 'passages not named', [
+            ('unnamed', u, r'<b>([\d,]+)</b>distinct passages'),
+            ('unnamed', u, r'<p class="dek">([\d,]+) Sanskrit passages'),
+            ('quotes', q, r'recitations, of ([\d,]+)\s+passages'),
+            ('note', n, r'of ([\d,]+) distinct\s+passages')]),
+        ('recurring', 'recurring passages', [
+            ('unnamed', u, r'<b>([\d,]+)</b>chanted in more than one talk'),
+            ('unnamed', u, r'<b>([\d,]+)</b> recurring</button>'),
+            ('quotes', q, r'<span class="n">([\d,]+) passages? heard in more '
+                          r'than one talk')]),
+        ('talks', 'talks', [
+            ('quotes', q, r'<p class="dek">([\d,]+) recorded talks'),
+            ('unnamed', u, r'across the ([\d,]+) talks')]),
     ]
 
 
@@ -202,26 +234,26 @@ def check_agreement(pages):
             return fail('all three pages must be here to check that they agree')
 
     bad, values = 0, {}
-    for key, what, first, second in claims(pages):
-        a_name, a_html, a_re = first
-        a = num(a_html, a_re, 'the ' + what, a_name)
-        if a is None:
-            bad += 1
+    for key, what, readings in claims(pages):
+        got = []
+        for where, html, pattern in readings:
+            v = num(html, pattern, 'the ' + what, where)
+            if v is None:
+                bad += 1
+            else:
+                got.append((where, v))
+        if not got:
             continue
-        values[key] = a
-        if second is None:
-            print('  %-18s %8s   (%s, stated once)' % (what, a, a_name))
-            continue
-        b_name, b_html, b_re = second
-        b = num(b_html, b_re, 'the ' + what, b_name)
-        if b is None:
-            bad += 1
-        elif a != b:
-            bad += fail('%s: the %s page says %s, the %s page says %s. One of '
-                        'them was rebuilt and the other was not.'
-                        % (what, a_name, a, b_name, b))
+        values[key] = got[0][1]
+        if len({v for _, v in got}) > 1:
+            bad += fail('%s: %s. One of them was rebuilt and the other was '
+                        'not, or one is counting something else.'
+                        % (what, ', '.join('the %s page says %s' % g
+                                           for g in got)))
         else:
-            print('  %-18s %8s   (%s and %s agree)' % (what, a, a_name, b_name))
+            print('  %-22s %8s   (%d readings, %s agree)'
+                  % (what, got[0][1], len(got),
+                     ' and '.join(sorted({w for w, _ in got}))))
     return bad, values
 
 
