@@ -8,6 +8,7 @@ and copied in by this script:
     audio-ingest/AB-VL-QUOTES-V2.html    -> what-the-jagadgurus-quote.html
     audio-ingest/AB-VL-UNNAMED.html      -> chanted-and-not-named.html
     audio-ingest/AB-VL-QUOTES-NOTE.html  -> the-note.html
+    audio-ingest/SHANKARA-NOT-FOUND.html -> shankara-quotes-not-found.html
 
 They come from audio-ingest because that is where their inputs live -- the
 transcripts, the forced alignments, the citation keys -- and there is no
@@ -72,6 +73,11 @@ PAGES = [
     ('AB-VL-QUOTES-V2.html', 'what-the-jagadgurus-quote.html'),
     ('AB-VL-UNNAMED.html', 'chanted-and-not-named.html'),
     ('AB-VL-QUOTES-NOTE.html', 'the-note.html'),
+    # The request to scholars for the verses the Jagadguru attributes to
+    # Śaṅkara that we could not place: rendered from audio-ingest's
+    # NOTE-shankara-quotes-not-found.md by scripts/note_page.py. It states
+    # none of the counts, so it is checked as a document and for its links.
+    ('SHANKARA-NOT-FOUND.html', 'shankara-quotes-not-found.html'),
 ]
 RENAME = {src: dst for src, dst in PAGES}
 
