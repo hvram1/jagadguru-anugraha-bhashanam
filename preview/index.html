@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anugraha Bhāṣaṇa Anukramaṇikā</title>
+<meta name="description" content="The Sanskrit chanted in the talks of the Jagadgurus of Śṛṅgerī, named, and placed at its moment in each recording.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600&family=Noto+Serif+Tamil:wght@400;600&family=Noto+Serif+Kannada:wght@400;600&display=swap">
+<!--
+  The page has three places -- Talks, Find, Works -- and one player that stays
+  docked while you move between them. On a phone the places are a tab bar at
+  the bottom and the player sits above it; open a talk and the player moves to
+  the top with the talk's contents scrolling beneath. On a wide screen the tabs
+  are in the header and the player floats at the right.
+
+  One verse row serves all three: a talk's contents, search results and a
+  work's page are lists of the same thing. Its data is talks.json beside this
+  file, built by audio-ingest/scripts/anukramanika_preview.py.
+
+  The player is behind a small adapter (load / play / pause / seek / time) so
+  that moving the recordings from YouTube to another host is a change to the
+  adapter, not to the page.
+-->
+<style>
+:root{
+  --paper:#f5f5f0; --card:#ffffff; --sunk:#fafaf7; --rule:#e4e2da; --rule-2:#eeece6;
+  --ink:#2f2f2c; --ink-2:#555551; --muted:#74726b; --faint:#a19f97;
+  --accent:#8b4513; --accent-soft:#f6ece3; --on-accent:#ffffff; --link:#3f73a3;
+  --pending:#7a5b12; --pending-bg:#fbf4dc; --pending-rule:#e6d39a;
+  --shadow:0 1px 3px rgba(40,30,10,.10); --shadow-up:0 8px 24px rgba(40,30,10,.16);
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --deva:"Noto Serif Devanagari","Kohinoor Devanagari","Devanagari MT","Nirmala UI",serif;
+  --taml:"Noto Serif Tamil","Tamil Sangam MN","Latha",serif;
+  --knda:"Noto Serif Kannada","Kannada Sangam MN","Tunga",serif;
+  --tabs-h:0px; --dock-h:0px; --head-h:56px; --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#16140f; --card:#211e18; --sunk:#1b1914; --rule:#38332a; --rule-2:#2b2720;
+  --ink:#ece7dc; --ink-2:#cdc6b8; --muted:#a39b8c; --faint:#776f62;
+  --accent:#e0a375; --accent-soft:#3a2a1d; --on-accent:#1b140d; --link:#8fb8dd;
+  --pending:#e6c76f; --pending-bg:#2f2814; --pending-rule:#5e4f22;
+  --shadow:0 1px 3px rgba(0,0,0,.5); --shadow-up:0 8px 24px rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#16140f; --card:#211e18; --sunk:#1b1914; --rule:#38332a; --rule-2:#2b2720;
+  --ink:#ece7dc; --ink-2:#cdc6b8; --muted:#a39b8c; --faint:#776f62;
+  --accent:#e0a375; --accent-soft:#3a2a1d; --on-accent:#1b140d; --link:#8fb8dd;
+  --pending:#e6c76f; --pending-bg:#2f2814; --pending-rule:#5e4f22;
+  --shadow:0 1px 3px rgba(0,0,0,.5); --shadow-up:0 8px 24px rgba(0,0,0,.6); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:15px; line-height:1.55}
+button,select,input{font:inherit; color:inherit}
+a{color:var(--link)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:6px}
+[hidden]{display:none !important}
+.num{font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px; margin:0 auto}
+
+/* ---------------------------------------------------------------- header */
+.top{position:sticky; top:0; z-index:30; background:var(--card); box-shadow:var(--shadow); padding-top:var(--safe-t)}
+.top .wrap{display:flex; align-items:center; gap:12px; min-height:56px}
+.brand{display:grid; line-height:1.2; text-decoration:none; color:var(--ink); min-width:0}
+.brand b{font-family:var(--deva); font-weight:600; font-size:17px; line-height:1.3}
+.brand span{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.scriptsel{margin-left:auto; display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--muted)}
+.scriptsel select{border:1px solid var(--rule); background:var(--card); border-radius:8px; padding:6px 8px; font-size:14px; min-height:36px}
+
+/* tabs: in the header on a wide screen, a bar at the bottom on a phone */
+.tabs{display:flex; gap:4px}
+.tab{display:grid; place-items:center; gap:1px; text-decoration:none; color:var(--muted); border-radius:8px; padding:8px 14px; font-size:14px; font-weight:600}
+.tab svg{width:20px; height:20px; display:none}
+.tab[aria-current="page"]{color:var(--accent); background:var(--accent-soft)}
+
+/* --------------------------------------------------------------- content */
+main{padding-bottom:calc(var(--tabs-h) + var(--dock-h) + 28px)}
+.preview{margin:14px auto 0; display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; font-size:12.5px; color:var(--pending)}
+.preview b{background:var(--pending-bg); border:1px solid var(--pending-rule); padding:1px 8px; border-radius:20px; font-weight:600;
+  letter-spacing:.04em; text-transform:uppercase; font-size:10.5px}
+
+.hero{margin:16px auto 0; background:var(--card); border-radius:10px; box-shadow:var(--shadow); padding:22px; display:grid;
+  grid-template-columns:minmax(0,280px) minmax(0,1fr); gap:28px; align-items:center}
+.portrait{margin:0; display:grid; gap:10px}
+.portrait .frame{aspect-ratio:4/5; border-radius:8px; border:1.5px dashed var(--faint); background:var(--sunk); display:grid;
+  place-content:center; text-align:center; gap:4px; padding:16px; color:var(--muted); font-size:14px}
+.portrait .frame small{font-size:12px; color:var(--faint)}
+.portrait figcaption{text-align:center; color:var(--accent); font-weight:600; font-size:14.5px}
+.hero h1{margin:0; display:grid; gap:2px; text-wrap:balance}
+.hero h1 .d{font-family:var(--deva); font-size:clamp(24px,4.4vw,32px); font-weight:600; line-height:1.35}
+.hero h1 .i{font-size:clamp(16px,2.6vw,19px); font-weight:600; color:var(--ink-2)}
+.hero .lede{margin:12px 0 0; font-size:15.5px; line-height:1.7; color:var(--ink-2); max-width:62ch}
+.hero .more p{margin:10px 0 0; font-size:15px; line-height:1.7; color:var(--ink-2); max-width:62ch}
+.hero .credit{margin:12px 0 0; font-size:12.5px; color:var(--muted)}
+.linkbtn{background:none; border:0; padding:8px 0; color:var(--link); font-weight:600; font-size:14px; cursor:pointer; min-height:40px}
+
+.bar{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:22px auto 0}
+.bar .lbl{font-size:13px; color:var(--muted); margin-right:4px}
+.seg{border:1px solid var(--rule); background:var(--card); border-radius:20px; padding:6px 14px; font-size:14px; cursor:pointer; color:var(--ink-2); min-height:38px}
+.seg[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--on-accent); font-weight:600}
+
+.group-title{margin:26px auto 10px; padding-bottom:8px; border-bottom:2px solid var(--rule); display:flex; gap:10px; align-items:baseline;
+  flex-wrap:wrap; font-size:17px; font-weight:600; color:var(--ink-2)}
+.group-title .d{font-family:var(--deva)}
+.group-title small{font-size:12.5px; font-weight:400; color:var(--muted)}
+
+/* talks: cards on a wide screen, a list on a phone -- one markup */
+.talks{list-style:none; margin:0 auto; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px}
+.talk{display:grid; grid-template-rows:auto 1fr auto; height:100%; background:var(--card); border-radius:10px; box-shadow:var(--shadow);
+  text-decoration:none; color:inherit; transition:transform .18s, box-shadow .18s; min-width:0}
+.talk:hover{transform:translateY(-3px); box-shadow:var(--shadow-up)}
+.cover{height:86px; background:var(--sunk); border-bottom:1px solid var(--rule); border-radius:10px 10px 0 0; position:relative; overflow:hidden}
+.cover svg{position:absolute; inset:0; width:100%; height:100%}
+.cover .n{position:absolute; left:14px; top:9px; font-size:28px; font-weight:600; color:var(--accent); line-height:1}
+.cover .n small{font-size:12px; color:var(--muted); font-weight:400}
+.tinfo{padding:12px 14px 4px; min-width:0}
+.tinfo h3{margin:0; font-size:15px; font-weight:600; line-height:1.35; text-wrap:balance}
+.tinfo .sub{margin:2px 0 0; font-size:13px; color:var(--muted)}
+.tinfo .date{margin:3px 0 0; font-size:12.5px; color:var(--accent)}
+.tinfo .date.none{color:var(--faint)}
+.tmeta{padding:6px 14px 13px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-size:12px; color:var(--muted)}
+.chip{border:1px solid var(--rule); border-radius:20px; padding:1px 8px; white-space:nowrap}
+.chip.pending{border-color:var(--pending-rule); background:var(--pending-bg); color:var(--pending)}
+.chip.series{background:var(--sunk)}
+
+/* ------------------------------------------------------------ verse rows */
+.verses{list-style:none; margin:0 auto; padding:0; display:grid; gap:10px}
+.vrow{background:var(--card); border-radius:10px; box-shadow:var(--shadow); padding:13px 14px; display:grid; gap:7px; min-width:0;
+  border:1px solid transparent}
+.vrow.timed{grid-template-columns:58px minmax(0,1fr); column-gap:12px; cursor:pointer}
+.vrow{scroll-margin-top:calc(var(--head-h) + 12px)}
+body.v-talk .vrow{scroll-margin-top:calc(var(--head-h) + var(--dock-h) + 12px)}
+.vrow.timed:hover{border-color:var(--rule)}
+.vrow.on{border-color:var(--accent); box-shadow:inset 4px 0 0 var(--accent), var(--shadow)}
+.vrow .at{font-size:14px; font-weight:600; color:var(--accent); padding-top:2px}
+.vrow .at small{display:block; font-weight:400; font-size:11px; color:var(--faint)}
+.vbody{display:grid; gap:7px; min-width:0}
+.vtop{display:flex; justify-content:space-between; align-items:flex-start; gap:10px}
+.vname{font-size:14px; font-weight:600}
+.vname.soft{font-weight:400; color:var(--muted)}
+.kind{font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin-right:6px; font-weight:600}
+.badge{display:inline-block; font-size:10.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; padding:1px 7px; border-radius:20px;
+  background:var(--pending-bg); color:var(--pending); border:1px solid var(--pending-rule); margin-right:6px; vertical-align:1px}
+.verse{font-family:var(--deva); font-size:17.5px; line-height:1.85; overflow-wrap:anywhere}
+.verse.taml{font-family:var(--taml); font-size:17px}
+.verse.knda{font-family:var(--knda); font-size:17px}
+.verse.iast{font-family:var(--sans); font-size:16px; line-height:1.7}
+.nm.deva{font-family:var(--deva)} .nm.taml{font-family:var(--taml)} .nm.knda{font-family:var(--knda)}
+.heard{font-size:12.5px; color:var(--pending)}
+.copy{flex:none; border:1px solid var(--rule); background:var(--card); border-radius:8px; font-size:12.5px; padding:0 10px; min-height:32px;
+  cursor:pointer; color:var(--ink-2)}
+.copy:hover{border-color:var(--accent); color:var(--accent)}
+.moments{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+.moments .lbl{font-size:12px; color:var(--muted); margin-right:2px}
+.moment{display:inline-flex; gap:8px; align-items:center; border:1px solid var(--rule); border-radius:20px; padding:0 12px; min-height:36px;
+  font-size:13px; color:var(--ink-2); background:var(--sunk); cursor:pointer}
+.moment:hover{border-color:var(--accent); color:var(--accent)}
+.moment .when{color:var(--accent); font-weight:600}
+.moment.playing{border-color:var(--accent); background:var(--accent-soft)}
+
+/* ------------------------------------------------------------ find, works */
+.findbox{position:sticky; top:var(--head-h); z-index:20; background:var(--paper); padding:14px 0 10px; margin:0 auto}
+.findbox input{width:100%; font-size:17px; padding:12px 14px; border-radius:10px; border:1.5px solid var(--rule); background:var(--card); min-height:48px}
+.findbox input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.status{margin:4px auto 10px; font-size:13.5px; color:var(--muted)}
+.tries{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 14px}
+.try{border:1px solid var(--rule); background:var(--card); border-radius:20px; padding:0 12px; min-height:36px; cursor:pointer; font-size:14px}
+.worklist{list-style:none; margin:10px auto 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:0 22px}
+.worklist a{display:flex; justify-content:space-between; gap:12px; padding:12px 2px; border-bottom:1px solid var(--rule); text-decoration:none;
+  color:var(--ink); font-size:15px; min-height:46px; align-items:center}
+.worklist a:hover{color:var(--accent)}
+.worklist .n{color:var(--faint); font-size:13px}
+.back{display:inline-flex; align-items:center; gap:6px; margin:14px 0 0; text-decoration:none; font-size:14px; font-weight:600; min-height:40px}
+.pagehead{margin:8px auto 14px; display:grid; gap:3px}
+.pagehead .eyebrow{font-size:11.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--accent); font-weight:600}
+.pagehead h2{margin:0; font-size:clamp(21px,4vw,27px); font-weight:600; text-wrap:balance}
+.pagehead p{margin:0; color:var(--muted); font-size:14px}
+
+/* ------------------------------------------------------------- talk page */
+.timeline{background:var(--card); border-radius:10px; box-shadow:var(--shadow); padding:10px 14px 8px; margin:0 auto 12px}
+.track{position:relative; height:32px; cursor:pointer; touch-action:none}
+.track .rail{position:absolute; left:0; right:0; top:14px; height:4px; border-radius:2px; background:var(--rule)}
+.track .done{position:absolute; left:0; top:14px; height:4px; border-radius:2px; background:var(--accent); width:0}
+.track .tick{position:absolute; top:6px; width:3px; height:20px; margin-left:-1px; border-radius:2px; background:var(--ink-2); opacity:.5}
+.track .tick.pending{background:var(--pending); opacity:.9}
+.track .tick.on{background:var(--accent); opacity:1}
+.track .head{position:absolute; top:9px; width:14px; height:14px; margin-left:-7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px var(--card); left:0}
+.scale{display:flex; justify-content:space-between; font-size:11px; color:var(--faint)}
+
+/* ------------------------------------------------------------------ dock */
+.dock{position:fixed; z-index:25; background:var(--card); box-shadow:var(--shadow-up); left:0; right:0;
+  bottom:var(--tabs-h); display:grid}
+.dock .video{position:relative; aspect-ratio:16/9; background:#000; max-height:42vh}
+.dock .video > *{position:absolute; inset:0; width:100%; height:100%; border:0}
+.dock.mini .video{display:none}
+.strip{display:flex; align-items:center; gap:4px; padding:6px 8px; min-height:56px; padding-left:max(8px,env(safe-area-inset-left,0px)); padding-right:max(8px,env(safe-area-inset-right,0px))}
+.ib{flex:none; width:44px; height:44px; border-radius:10px; border:0; background:none; cursor:pointer; display:grid; place-items:center; color:var(--ink)}
+.ib:hover{background:var(--sunk)}
+.ib:disabled{opacity:.35; cursor:default}
+.ib.play{background:var(--accent); color:var(--on-accent)}
+.ib svg{width:22px; height:22px}
+.now{flex:1; min-width:0; background:none; border:0; text-align:left; cursor:pointer; padding:4px 6px; display:grid; line-height:1.25; border-radius:8px}
+.now:hover{background:var(--sunk)}
+.now b{font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.now span{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.toast{position:fixed; left:50%; transform:translateX(-50%); bottom:calc(var(--tabs-h) + var(--dock-h) + 14px); z-index:40;
+  background:var(--ink); color:var(--paper); padding:8px 16px; border-radius:20px; font-size:14px; box-shadow:var(--shadow-up)}
+.foot{margin:34px auto 0; padding-top:20px; border-top:1px solid var(--rule); color:var(--muted); font-size:12.5px; text-align:center; display:grid; gap:4px}
+
+/* ------------------------------------------------------------- phone */
+@media (max-width:759px){
+  /* The sections are a row under the title, not a bar at the foot of the
+     screen: a phone browser's own toolbar can float over a bar fixed there. */
+  .top .wrap{flex-wrap:wrap; column-gap:10px; row-gap:0; padding-top:6px}
+  .brand{flex:1}
+  .top .tabs{order:3; flex:0 0 100%; display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:4px; border-top:1px solid var(--rule-2)}
+  .tab{display:flex; justify-content:center; align-items:center; gap:7px; border-radius:0; font-size:14px; min-height:46px; padding:0;
+    border-bottom:2.5px solid transparent}
+  .tab svg{display:block; width:19px; height:19px}
+  .tab[aria-current="page"]{background:none; border-bottom-color:var(--accent)}
+  .dock{padding-bottom:var(--safe-b)}
+  .hero{grid-template-columns:1fr; padding:18px; gap:16px}
+  .portrait{max-width:220px; width:100%; margin:0 auto}
+  .talks{grid-template-columns:1fr; gap:8px}
+  .talk{grid-template-columns:minmax(0,1fr) auto; grid-template-rows:auto; align-items:center}
+  .talk:hover{transform:none}
+  .cover{display:none}
+  .tinfo{padding:11px 0 11px 14px}
+  .tmeta{padding:0 14px 0 6px; flex-direction:column; align-items:flex-end; gap:4px; text-align:right}
+  .tmeta .lang{display:none}
+  .vrow.timed{grid-template-columns:1fr}
+  .vrow .at small{display:inline; margin-left:6px}
+  /* a talk: the player at the top, the contents scrolling under it */
+  body.v-talk .dock{top:var(--head-h); bottom:auto; padding-bottom:0}
+  body.v-talk main{padding-top:var(--dock-h); padding-bottom:28px}
+}
+/* ------------------------------------------------------------- wide */
+@media (min-width:760px){
+  .dock{left:auto; right:20px; bottom:20px; width:400px; border-radius:12px; overflow:hidden}
+  body:not(.v-talk) main{padding-bottom:28px}
+}
+/* a talk on a tablet: the player across the top, as on a phone */
+@media (min-width:760px) and (max-width:1099px){
+  body.v-talk .dock{top:var(--head-h); bottom:auto; left:0; right:0; width:auto; border-radius:0}
+  body.v-talk .dock .video{max-height:38vh; margin:0 auto; width:min(100%, calc(38vh * 16 / 9))}
+  body.v-talk main{padding-top:var(--dock-h); padding-bottom:28px}
+}
+/* a talk on a wide screen: contents on the left, the player beside them */
+@media (min-width:1100px){
+  body.v-talk .dock{top:calc(var(--head-h) + 16px); bottom:auto; right:max(20px, calc((100vw - 1180px) / 2 + 16px)); width:420px}
+  body.v-talk .talkpage{padding-right:464px}
+  body.v-talk main{padding-bottom:28px}
+}
+@media (prefers-reduced-motion:reduce){.talk{transition:none}.talk:hover{transform:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap gut">
+    <a class="brand" href="#talks"><b>अनुग्रहभाषणानुक्रमणिका</b><span>Anugraha Bhāṣaṇa Anukramaṇikā</span></a>
+    <nav class="tabs" aria-label="Sections">
+      <a class="tab" href="#talks" data-tab="talks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Talks</a>
+      <a class="tab" href="#find" data-tab="find"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5" stroke-linecap="round"/></svg>Find</a>
+      <a class="tab" href="#works" data-tab="works"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4h10a3 3 0 013 3v13H8a3 3 0 01-3-3z"/><path d="M5 17a3 3 0 013-3h10" /></svg>Works</a>
+    </nav>
+    <label class="scriptsel"><span class="sr">Show Sanskrit in</span>
+      <select id="script" aria-label="Show Sanskrit in">
+        <option value="deva">देवनागरी</option><option value="taml">தமிழ்</option><option value="knda">ಕನ್ನಡ</option><option value="iast">IAST</option>
+      </select>
+    </label>
+  </div>
+</header>
+
+<main id="main" class="gut"><p class="status wrap">Loading…</p></main>
+
+<aside class="dock" id="dock" hidden aria-label="Player">
+  <div class="video"><div id="yt"></div></div>
+  <div class="strip">
+    <button class="ib play" id="pPlay" aria-label="Play"></button>
+    <button class="ib" id="pPrev" aria-label="Previous quotation"></button>
+    <button class="ib" id="pNext" aria-label="Next quotation"></button>
+    <button class="now" id="pNow"><b id="pTitle"></b><span id="pSub"></span></button>
+    <button class="ib" id="pMin" aria-label="Minimise player"></button>
+  </div>
+</aside>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+'use strict';
+const ICON = {
+  play:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>',
+  prev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>',
+  next:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>',
+  min:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>',
+  close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+};
+const $ = id => document.getElementById(id);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const mmss = s => { s = Math.max(0, Math.floor(s)); const h = Math.floor(s/3600), m = Math.floor(s%3600/60), x = s%60;
+  return (h ? h + ':' + String(m).padStart(2,'0') : m) + ':' + String(x).padStart(2,'0'); };
+const mins = s => Math.round(s/60) + ' min';
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const fmtDate = iso => { const [y, m, d] = iso.split('-').map(Number); return d + ' ' + MONTHS[m-1] + ' ' + y; };
+const pref = (k, d) => { try { const v = localStorage.getItem('anukramanika-' + k); return v == null ? d : v; } catch (e) { return d; } };
+const setPref = (k, v) => { try { localStorage.setItem('anukramanika-' + k, v); } catch (e) {} };
+const JG = {'bharati-tirtha':'Jagadguru Śrī Bhāratī Tīrtha Mahāsvāmin','vidhushekhara-bharati':'Jagadguru Śrī Vidhuśekhara Bhāratī Mahāsvāmin'};
+const LANG = {tamil:'Tamil', kannada:'Kannada', sanskrit:'Sanskrit'};
+const ytLink = (t, s) => 'https://www.youtube.com/watch?v=' + t.yt + (s ? '&t=' + Math.floor(s) + 's' : '');
+
+/* ================================================================ scripts
+   Verses are stored in Devanagari and shown in the reader's chosen script.
+   The same conversions give search its keys, so a query typed in any of the
+   four scripts reaches the same verse. */
+const VEDIC = /[॑-॔᳐-᳿꣠-꣱ॅ]/g;
+const CONS = {'क':'k','ख':'kh','ग':'g','घ':'gh','ङ':'ṅ','च':'c','छ':'ch','ज':'j','झ':'jh','ञ':'ñ','ट':'ṭ','ठ':'ṭh','ड':'ḍ','ढ':'ḍh','ण':'ṇ',
+  'त':'t','थ':'th','द':'d','ध':'dh','न':'n','प':'p','फ':'ph','ब':'b','भ':'bh','म':'m','य':'y','र':'r','ल':'l','ळ':'ḷ','व':'v','श':'ś','ष':'ṣ','स':'s','ह':'h'};
+const VOW = {'अ':'a','आ':'ā','इ':'i','ई':'ī','उ':'u','ऊ':'ū','ऋ':'ṛ','ॠ':'ṝ','ऌ':'ḷ','ए':'e','ऐ':'ai','ओ':'o','औ':'au'};
+const SIGN = {'ा':'ā','ि':'i','ी':'ī','ु':'u','ू':'ū','ृ':'ṛ','ॄ':'ṝ','ॢ':'ḷ','े':'e','ै':'ai','ो':'o','ौ':'au'};
+function toIAST(s){
+  s = (s || '').replace(VEDIC, '').replace(/ꣳ/g, 'ं'); let o = '';
+  for (let i = 0; i < s.length; i++){
+    const c = s[i];
+    if (CONS[c]){ let j = i + 1; if (s[j] === '़') j++;
+      if (s[j] === '्'){ o += CONS[c]; i = j; } else if (SIGN[s[j]]){ o += CONS[c] + SIGN[s[j]]; i = j; } else { o += CONS[c] + 'a'; i = j - 1; } }
+    else if (VOW[c]) o += VOW[c];
+    else if (c === 'ं') o += 'ṃ'; else if (c === 'ः') o += 'ḥ'; else if (c === 'ँ') o += 'm̐';
+    else if (c === 'ऽ') o += '’'; else if (c === '॥') o += '||'; else if (c === '।') o += '|';
+    else if (c >= '०' && c <= '९') o += String(c.charCodeAt(0) - 0x966);
+    else if (c !== '्' && c !== '़') o += c;
+  }
+  return o;
+}
+const TCONS = {'क':['க',''],'ख':['க','²'],'ग':['க','³'],'घ':['க','⁴'],'ङ':['ங',''],'च':['ச',''],'छ':['ச','²'],'ज':['ஜ',''],'झ':['ஜ','²'],'ञ':['ஞ',''],
+  'ट':['ட',''],'ठ':['ட','²'],'ड':['ட','³'],'ढ':['ட','⁴'],'ण':['ண',''],'त':['த',''],'थ':['த','²'],'द':['த','³'],'ध':['த','⁴'],'न':['ந',''],
+  'प':['ப',''],'फ':['ப','²'],'ब':['ப','³'],'भ':['ப','⁴'],'म':['ம',''],'य':['ய',''],'र':['ர',''],'ल':['ல',''],'ळ':['ள',''],'व':['வ',''],
+  'श':['ஶ',''],'ष':['ஷ',''],'स':['ஸ',''],'ह':['ஹ','']};
+const TVOW = {'अ':'அ','आ':'ஆ','इ':'இ','ई':'ஈ','उ':'உ','ऊ':'ஊ','ऋ':'ரு','ॠ':'ரூ','ए':'ஏ','ऐ':'ஐ','ओ':'ஓ','औ':'ஔ'};
+const TSIGN = {'ा':'ா','ि':'ி','ी':'ீ','ु':'ு','ू':'ூ','े':'ே','ै':'ை','ो':'ோ','ौ':'ௌ'};
+function toTamil(s){
+  s = (s || '').replace(VEDIC, '').replace(/ꣳ/g, 'ं'); let o = '';
+  for (let i = 0; i < s.length; i++){
+    const c = s[i];
+    if (TCONS[c]){ const [b, sup] = TCONS[c]; const n = s[i+1];
+      if (n === '्'){ o += b + '்' + sup; i++; }
+      else if (TSIGN[n]){ o += b + TSIGN[n] + sup; i++; }
+      else if (n === 'ृ' || n === 'ॄ'){ o += b + '்' + sup + (n === 'ृ' ? 'ரு' : 'ரூ'); i++; }
+      else o += b + sup; }
+    else if (TVOW[c]) o += TVOW[c];
+    else if (c === 'ं' || c === 'ँ') o += 'ம்'; else if (c === 'ः') o += 'ஃ'; else if (c === 'ऽ') o += '’';
+    else if (c >= '०' && c <= '९') o += String(c.charCodeAt(0) - 0x966);
+    else if (c !== '्' && c !== '़') o += c;
+  }
+  return o;
+}
+const toKannada = s => (s || '').replace(VEDIC, '').replace(/ꣳ/g, 'ं').replace(/[ँ-ॣ०-९]/g, c => String.fromCharCode(c.charCodeAt(0) + 0x380));
+let script = pref('script', 'deva');
+const keepDanda = s => s.replace(/ +(?=[।॥|])/g, '\u00a0');
+const show = s => keepDanda(script === 'taml' ? toTamil(s) : script === 'knda' ? toKannada(s) : script === 'iast' ? toIAST(s) : (s || ''));
+/* A source's name: the index gives it in IAST and in Devanagari; Tamil and
+   Kannada are made from the Devanagari, as the verses are. */
+const nameIn = (iast, deva) => !deva || script === 'iast' ? (iast || '') : script === 'deva' ? deva : show(deva);
+const nameEl = (tag, cls, iast, deva) => { const e = el(tag, (cls ? cls + ' ' : '') + 'nm ' + (deva ? script : 'iast'), nameIn(iast, deva)); return e; };
+
+/* ============================================================ search keys
+   One loose key per verse: no script, no vowel length, no aspiration, no
+   spaces (sandhi moves them), ś/ṣ/s and c/ch merged, a visarga typed as a
+   final h dropped, doubled letters single. Tamil script cannot tell k from g
+   or t from d, so a Tamil query is matched on a second, coarser key. */
+function loose(latin){
+  let s = (latin || '').toLowerCase().replace(/ṛ|ṝ/g, 'ri').replace(/ḥ/g, '').replace(/m̐/g, 'm').normalize('NFD').replace(/[̀-ͯ]/g, '');
+  s = s.replace(/h(?=[^a-z]|$)/g, '');
+  s = s.replace(/[^a-z]/g, '');
+  return s.replace(/([kgcjtdpbs])h/g, '$1').replace(/ee/g, 'i').replace(/oo/g, 'u').replace(/w/g, 'v').replace(/x/g, 'ks')
+          .replace(/gn|gy/g, 'jn').replace(/n(?=[^aeiouy])/g, 'm').replace(/(.)\1+/g, '$1');
+}
+const coarse = k => k.replace(/ri|ru/g, 'r').replace(/g/g, 'k').replace(/d/g, 't').replace(/b/g, 'p').replace(/[js]/g, 'c').replace(/(.)\1+/g, '$1');
+const TQ = {'க':'k','ங':'n','ச':'c','ஜ':'j','ஞ':'n','ட':'t','ண':'n','த':'t','ந':'n','ன':'n','ப':'p','ம':'m','ய':'y','ர':'r','ற':'r',
+  'ல':'l','ள':'l','ழ':'l','வ':'v','ஶ':'s','ஷ':'s','ஸ':'s','ஹ':'h'};
+const TQV = {'அ':'a','ஆ':'a','இ':'i','ஈ':'i','உ':'u','ஊ':'u','எ':'e','ஏ':'e','ஐ':'ai','ஒ':'o','ஓ':'o','ஔ':'au'};
+const TQS = {'ா':'a','ி':'i','ீ':'i','ு':'u','ூ':'u','ெ':'e','ே':'e','ை':'ai','ொ':'o','ோ':'o','ௌ':'au'};
+function tamilToLatin(s){
+  s = s.replace(/[²³⁴0-9]/g, ''); let o = '';
+  for (let i = 0; i < s.length; i++){
+    const c = s[i];
+    if (TQ[c]){ const n = s[i+1]; if (n === '்'){ o += TQ[c]; i++; } else if (TQS[n]){ o += TQ[c] + TQS[n]; i++; } else o += TQ[c] + 'a'; }
+    else if (TQV[c]) o += TQV[c];
+  }
+  return o;
+}
+const fold = s => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w\s.ऀ-ॿ]/g, ' ').replace(/\s+/g, ' ').trim();
+
+/* ================================================================== data */
+let TALKS = [], VERSES = [], WORKS = [];
+function index(){
+  const by = new Map();
+  for (const t of TALKS) for (const r of t.rows){
+    const id = r.name || ('?' + loose(toIAST(r.heard)).slice(0, 24));
+    let v = by.get(id);
+    if (!v){ v = {id, name: r.name, name_deva: r.name_deva, group: r.group, group_deva: r.group_deva, kind: r.kind, said: r.said,
+                  text: r.text || r.heard, keys: r.keys || [], at: []};
+      v.k = loose(toIAST(r.text || '')) + '|' + loose(toIAST(r.heard)); v.kc = coarse(v.k); by.set(id, v); VERSES.push(v); }
+    v.at.push({t, r});
+  }
+  const m = new Map(), dv = new Map();
+  for (const v of VERSES) if (v.group){ m.set(v.group, (m.get(v.group) || 0) + v.at.length); dv.set(v.group, v.group_deva); }
+  WORKS = [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([g, n]) => [g, n, dv.get(g)]);
+}
+const quoted = t => t.rows.filter(r => r.name && r.kind !== 'dhyana' && r.kind !== 'invocation').length;
+const pending = t => t.rows.filter(r => !r.name).length;
+
+function search(q){
+  q = (q || '').trim(); if (q.length < 2) return null;
+  const hits = new Map(), add = (v, w) => { if (!hits.has(v) || hits.get(v) < w) hits.set(v, w); };
+  const isTamil = /[஀-௿]/.test(q), isDeva = /[ऀ-ॿ]/.test(q), isKnda = /[ಀ-೿]/.test(q);
+  if (!isTamil && !isKnda){
+    const f = fold(q);
+    for (const v of VERSES) for (const k of v.keys)
+      if (k.startsWith(f) && (k.length === f.length || /[ .]/.test(k[f.length]))) { add(v, 3); break; }
+  }
+  const lat = isTamil ? tamilToLatin(q) : isKnda ? toIAST(q.replace(/[ಁ-ೣ೦-೯]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x380))) : isDeva ? toIAST(q) : q;
+  const k = loose(lat);
+  // A number means a place (Gita 4.40), not words: matching "gita" inside a
+  // verse's text would add every verse that names the Gītā.
+  if (k.length >= 4 && !/[0-9०-९]/.test(q)){
+    if (isTamil){ const kc = coarse(k); for (const v of VERSES) if (v.kc.includes(kc)) add(v, 2); }
+    else for (const v of VERSES) if (v.k.includes(k)) add(v, 2);
+  }
+  return [...hits].sort((a, b) => b[1] - a[1] || b[0].at.length - a[0].at.length).map(x => x[0]);
+}
+
+/* ================================================================ player
+   The page asks the player for five things -- load, play, pause, seek, time.
+   This adapter answers them from YouTube; another host is another adapter. */
+const Player = (() => {
+  let yt = null, ready = false, pending = null, talk = null, state = 'idle', timer = null;
+  const subs = new Set();
+  window.onYouTubeIframeAPIReady = () => { ready = true; if (pending){ const p = pending; pending = null; load(p.t, p.s, p.auto); } };
+  function api(){ if (document.getElementById('yt-api')) return;
+    const s = document.createElement('script'); s.id = 'yt-api'; s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s); }
+  const emit = () => subs.forEach(f => f());
+  function tick(){ clearInterval(timer); timer = setInterval(() => { if (yt && yt.getCurrentTime) emit(); }, 300); }
+  function load(t, s, auto){
+    const prev = talk; talk = t; Dock.show(); emit();
+    if (!ready){ pending = {t, s, auto}; api(); return; }
+    const start = Math.max(0, Math.floor(s || 0));
+    if (!yt){
+      yt = new YT.Player('yt', {videoId: t.yt, playerVars: Object.assign({start, autoplay: auto ? 1 : 0, playsinline: 1, rel: 0}, /^https?:/.test(location.origin) ? {origin: location.origin} : {}),
+        events: {onReady: e => { if (auto) e.target.playVideo(); emit(); },
+                 onStateChange: e => { state = ({1:'playing', 2:'paused', 0:'ended', 3:'buffering', 5:'cued'})[e.data] || 'idle'; emit(); }}});
+      tick();
+    } else if (prev && prev.key === t.key){ yt.seekTo(start, true); if (auto) yt.playVideo(); }
+    else if (auto) yt.loadVideoById({videoId: t.yt, startSeconds: start});
+    else yt.cueVideoById({videoId: t.yt, startSeconds: start});
+  }
+  return {
+    load, sub: f => subs.add(f),
+    get talk(){ return talk; },
+    playing: () => state === 'playing' || state === 'buffering',
+    time: () => (yt && yt.getCurrentTime) ? yt.getCurrentTime() : 0,
+    play(){ if (yt && yt.playVideo) yt.playVideo(); },
+    pause(){ if (yt && yt.pauseVideo) yt.pauseVideo(); },
+    seek(s){ if (yt && yt.seekTo){ yt.seekTo(s, true); yt.playVideo(); } },
+    stop(){ if (yt && yt.stopVideo) yt.stopVideo(); talk = null; emit(); },
+  };
+})();
+
+/* ================================================================== dock */
+const Dock = (() => {
+  const d = $('dock'), title = $('pTitle'), sub = $('pSub');
+  $('pPrev').innerHTML = ICON.prev; $('pNext').innerHTML = ICON.next;
+  let mini = false;
+  const rowAt = t => { const s = Player.time(); let j = -1; t.rows.forEach((r, i) => { if (s >= r.start - 1) j = i; }); return j; };
+  function paint(){
+    const t = Player.talk;
+    $('pPlay').innerHTML = Player.playing() ? ICON.pause : ICON.play;
+    $('pPlay').setAttribute('aria-label', Player.playing() ? 'Pause' : 'Play');
+    $('pMin').innerHTML = mini ? ICON.close : ICON.min;
+    $('pMin').setAttribute('aria-label', mini ? 'Close player' : 'Minimise player');
+    if (!t) return;
+    const j = rowAt(t), r = t.rows[j];
+    title.textContent = t.label + (t.n ? ' · Vedānta ' + t.n + ' of 15' : '');
+    sub.textContent = mmss(Player.time()) + ' · ' + (r ? (r.name ? nameIn(r.name, r.name_deva) : 'not yet named') : 'before the first quotation');
+    $('pPrev').disabled = j <= 0; $('pNext').disabled = j >= t.rows.length - 1;
+  }
+  function size(){ document.documentElement.style.setProperty('--dock-h', d.hidden ? '0px' : d.offsetHeight + 'px'); }
+  const top = document.querySelector('.top');
+  const headSize = () => document.documentElement.style.setProperty('--head-h', top.offsetHeight + 'px');
+  new ResizeObserver(headSize).observe(top); headSize();
+  new ResizeObserver(size).observe(d);
+  Player.sub(paint);
+  const step = k => { const t = Player.talk; if (!t) return; const j = Math.min(t.rows.length - 1, Math.max(0, rowAt(t) + k)); Player.seek(t.rows[j].start); };
+  $('pPrev').onclick = () => step(-1); $('pNext').onclick = () => step(1);
+  $('pPlay').onclick = () => { if (mini){ mini = false; d.classList.remove('mini'); } Player.playing() ? Player.pause() : Player.play(); paint(); };
+  $('pMin').onclick = () => {
+    if (mini){ Player.stop(); d.hidden = true; mini = false; d.classList.remove('mini'); size(); return; }
+    Player.pause(); mini = true; d.classList.add('mini'); paint(); size();
+  };
+  $('pNow').onclick = () => { const t = Player.talk; if (t) go('talk/' + t.key); };
+  return { show(){ d.hidden = false; if (mini){ mini = false; d.classList.remove('mini'); } paint(); size(); }, paint };
+})();
+
+/* ================================================================== copy */
+let toastT = null;
+function say(m){ const t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 1800); }
+function copyVerse(v, t, r){
+  const s = [show(v.text), '— ' + (v.name ? nameIn(v.name, v.name_deva) : 'source not yet named'), t.label + ' · ' + mmss(r.start) + ' · ' + ytLink(t, r.start)].join('\n');
+  const fallback = () => { const a = el('textarea', 'sr'); a.value = s; document.body.appendChild(a); a.select();
+    try { document.execCommand('copy'); say('Copied'); } catch (e) { say('Select the text to copy it'); } a.remove(); };
+  try { navigator.clipboard.writeText(s).then(() => say('Copied'), fallback); } catch (e) { fallback(); }
+}
+
+/* ============================================================ verse rows
+   One row for every list of verses on the site. In a talk it carries the
+   time and plays on a tap; elsewhere it lists every moment it is chanted. */
+function vname(v){
+  const n = el('div', 'vname');
+  if (!v.name){ n.appendChild(el('span', 'badge', 'Not yet named')); n.appendChild(el('span', null, v.said ? 'He names ' + v.said : 'Source not yet traced')); if (!v.said) n.classList.add('soft'); }
+  else { if (v.kind === 'dhyana') n.appendChild(el('span', 'kind', 'Opening')); if (v.kind === 'invocation') n.appendChild(el('span', 'kind', 'Closing')); n.appendChild(nameEl('span', null, v.name, v.name_deva)); }
+  return n;
+}
+function verseRow(v, opt){
+  const li = el('li', 'vrow' + (opt.talk ? ' timed' : ''));
+  const first = opt.talk ? {t: opt.talk, r: opt.r} : v.at[0];
+  if (opt.talk){
+    const at = el('div', 'at num', mmss(opt.r.start)); at.appendChild(el('small', null, Math.max(1, Math.round(opt.r.end - opt.r.start)) + ' s'));
+    li.appendChild(at); li.tabIndex = 0;
+    const playIt = () => Player.load(opt.talk, opt.r.start, true);
+    li.onclick = e => { if (!e.target.closest('button')) playIt(); };
+    li.onkeydown = e => { if (e.target === li && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); playIt(); } };
+  }
+  const b = el('div', 'vbody');
+  const top = el('div', 'vtop'); top.appendChild(vname(v));
+  const c = el('button', 'copy', 'Copy'); c.setAttribute('aria-label', 'Copy this verse with its source and link');
+  c.onclick = () => copyVerse(v, first.t, first.r); top.appendChild(c); b.appendChild(top);
+  const text = opt.talk ? (opt.r.text || opt.r.heard) : v.text;
+  const vx = el('div', 'verse ' + script, show(text)); vx.lang = script === 'iast' ? 'sa-Latn' : 'sa'; b.appendChild(vx);
+  if (!v.name) b.appendChild(el('div', 'heard', 'As heard in the recording; a word may be slightly off.'));
+  if (!opt.talk){
+    const ms = el('div', 'moments');
+    const talksN = new Set(v.at.map(x => x.t.key)).size;
+    ms.appendChild(el('span', 'lbl', talksN > 1 ? 'Chanted in ' + talksN + ' talks' : 'Chanted in'));
+    for (const x of v.at){
+      const m = el('button', 'moment num'); m.dataset.k = x.t.key; m.dataset.s = x.r.start;
+      m.appendChild(el('span', null, x.t.n ? 'Vedānta ' + x.t.n : x.t.label));
+      m.appendChild(el('span', 'when', '▶ ' + mmss(x.r.start)));
+      m.setAttribute('aria-label', 'Play ' + x.t.label + ' at ' + mmss(x.r.start));
+      m.onclick = () => Player.load(x.t, x.r.start, true);
+      ms.appendChild(m);
+    }
+    b.appendChild(ms);
+  }
+  li.appendChild(b);
+  return li;
+}
+
+/* ================================================================= views */
+const main = $('main');
+const wrap = cls => { const d = el('div', 'wrap' + (cls ? ' ' + cls : '')); main.appendChild(d); return d; };
+
+function cover(t){
+  const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 300 86'); svg.setAttribute('preserveAspectRatio', 'none'); svg.setAttribute('aria-hidden', 'true');
+  const line = document.createElementNS(ns, 'rect'); [['x',14],['y',66],['width',272],['height',2],['fill','var(--rule)']].forEach(([k, v]) => line.setAttribute(k, v)); svg.appendChild(line);
+  for (const r of t.rows){ const m = document.createElementNS(ns, 'rect');
+    [['x', (14 + 272 * r.start / t.duration).toFixed(1)], ['y', r.name ? 52 : 46], ['width', 2.4], ['height', r.name ? 16 : 22],
+     ['fill', r.name ? 'var(--accent)' : 'var(--pending)'], ['opacity', r.kind === 'verse' || !r.name ? 1 : .45]].forEach(([k, v]) => m.setAttribute(k, v));
+    svg.appendChild(m); }
+  return svg;
+}
+function talkItem(t, mixed){
+  const li = el('li'), a = el('a', 'talk'); a.href = '#talk/' + t.key; li.appendChild(a);
+  const c = el('div', 'cover'); c.appendChild(cover(t));
+  if (t.n){ const n = el('div', 'n num', String(t.n)); n.appendChild(el('small', null, ' of 15')); c.appendChild(n); }
+  a.appendChild(c);
+  const i = el('div', 'tinfo'); i.appendChild(el('h3', null, t.label)); if (t.sub) i.appendChild(el('p', 'sub', t.sub));
+  const d = el('p', 'date' + (t.date ? '' : ' none'), t.date ? fmtDate(t.date) : 'Date not given');
+  if (t.date_said) d.title = 'From the video’s description: “' + t.date_said + '”';
+  i.appendChild(d); a.appendChild(i);
+  const m = el('div', 'tmeta num');
+  m.appendChild(el('span', null, quoted(t) + (quoted(t) === 1 ? ' quotation' : ' quotations') + ' · ' + mins(t.duration)));
+  if (pending(t)) m.appendChild(el('span', 'chip pending', pending(t) + ' not yet named'));
+  if (mixed && t.series === 'vl') m.appendChild(el('span', 'chip series', 'Vedānta ' + t.n + ' of 15'));
+  if (t.language !== 'tamil') m.appendChild(el('span', 'chip lang', LANG[t.language]));
+  if (t.jagadguru !== 'bharati-tirtha') m.appendChild(el('span', 'chip lang', 'Śrī Vidhuśekhara Bhāratī'));
+  a.appendChild(m);
+  return li;
+}
+
+function viewTalks(){
+  const pv = wrap('preview'); pv.appendChild(el('b', null, 'Design preview'));
+  pv.appendChild(el('span', null, 'Laid out after Sacred Writings of the Jagadguru. Not a publication of the maṭha.'));
+  const h = wrap('hero');
+  const fig = el('figure', 'portrait'); const fr = el('div', 'frame'); fr.appendChild(el('span', null, 'Photograph of the Jagadguru'));
+  fr.appendChild(el('small', null, 'to be provided by the maṭha')); fig.appendChild(fr);
+  fig.appendChild(el('figcaption', null, 'Jagadguru Śrī Bhāratī Tīrtha Mahāsvāmin')); h.appendChild(fig);
+  const tx = el('div');
+  const h1 = el('h1'); h1.appendChild(el('span', 'd', 'अनुग्रहभाषणानुक्रमणिका')); h1.appendChild(el('span', 'i', 'Anugraha Bhāṣaṇa Anukramaṇikā')); tx.appendChild(h1);
+  tx.appendChild(el('p', 'lede', 'In every talk the Jagadguru brings a verse of the Gītā, a line of Śaṅkara’s bhāṣya or a śloka from the Purāṇas into what he is saying. This index names each one, and plays the recording from the moment it is chanted.'));
+  const more = el('div', 'more'); more.hidden = true;
+  more.appendChild(el('p', null, 'Each talk opens to its own contents: the quotations in the order he chants them, with the work and the place each comes from. Tap one and the talk plays from there, so the verse is heard in the setting he gave it. Find looks a verse up by its words, however you spell them; Works lists every text he quotes.'));
+  more.appendChild(el('p', null, 'A few passages have not yet been traced to a source. They stay in their place, marked “not yet named”, and a separate request asks scholars to help identify them.'));
+  tx.appendChild(more);
+  const rm = el('button', 'linkbtn', 'Read more'); rm.setAttribute('aria-expanded', 'false');
+  rm.onclick = () => { more.hidden = !more.hidden; rm.textContent = more.hidden ? 'Read more' : 'Read less'; rm.setAttribute('aria-expanded', String(!more.hidden)); };
+  tx.appendChild(rm); tx.appendChild(el('p', 'credit', 'Prepared from the recordings published by the Śṛṅgerī maṭha'));
+  h.appendChild(tx);
+
+  const mode = pref('arrange', 'series');
+  const bar = wrap('bar'); bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', 'Arrange the talks');
+  bar.appendChild(el('span', 'lbl', 'Arrange'));
+  for (const [k, l] of [['series', 'By series'], ['date', 'By date']]){
+    const b = el('button', 'seg', l); b.setAttribute('aria-pressed', String(k === mode));
+    b.onclick = () => { setPref('arrange', k); render(true); }; bar.appendChild(b);
+  }
+  const group = (deva, label, note, list, mixed) => {
+    const g = wrap('group-title'); g.setAttribute('role', 'heading'); g.setAttribute('aria-level', '2');
+    if (deva){ g.appendChild(el('span', 'd', deva)); g.appendChild(el('span', null, '/ ' + label)); } else g.appendChild(el('span', null, label));
+    if (note) g.appendChild(el('small', null, note));
+    const ul = el('ul', 'talks wrap'); list.forEach(t => ul.appendChild(talkItem(t, mixed))); main.appendChild(ul);
+  };
+  if (mode === 'date'){
+    const months = new Map();
+    for (const t of TALKS.filter(t => t.date).sort((a, b) => a.date.localeCompare(b.date))){ const k = t.date.slice(0, 7); if (!months.has(k)) months.set(k, []); months.get(k).push(t); }
+    for (const [k, list] of months){ const [y, m] = k.split('-').map(Number); group('', MONTHS[m-1] + ' ' + y, '', list, true); }
+    const nd = TALKS.filter(t => !t.date).sort((a, b) => a.label.localeCompare(b.label));
+    if (nd.length) group('', 'Date not given', 'the video’s description names no day', nd, true);
+  } else {
+    const ab = TALKS.filter(t => t.series === 'ab').sort((a, b) => a.label.localeCompare(b.label));
+    const vl = TALKS.filter(t => t.series === 'vl').sort((a, b) => a.n - b.n);
+    group('अनुग्रहभाषणम्', 'Anugraha Bhāṣaṇam', 'by place', ab);
+    group('वेदान्तः', 'Vedānta', 'fifteen talks, in order', vl);
+  }
+  foot();
+}
+
+let query = '';
+function viewFind(){
+  const box = wrap('findbox'); const lab = el('label', 'sr', 'Find a verse'); lab.htmlFor = 'q';
+  const inp = el('input'); inp.id = 'q'; inp.type = 'search'; inp.enterKeyHint = 'search'; inp.autocomplete = 'off'; inp.spellcheck = false;
+  inp.placeholder = 'A verse’s words, or a work: karmanye · கர்மண்யே · Gita 2.47'; inp.value = query;
+  box.append(lab, inp);
+  const out = wrap();
+  const draw = () => {
+    out.replaceChildren();
+    const res = search(query);
+    if (!res){
+      out.appendChild(el('p', 'status', 'Type any part of a verse, in any spelling or script, or a work and its place. For example:'));
+      const tr = el('div', 'tries');
+      for (const q of ['karmanye vadhikaraste', 'சாஸ்த்ரஸ்ய குருவாக்யஸ்ய', 'भज गोविन्दं', 'Gita 4.34', 'Vivekachudamani']){
+        const b = el('button', 'try', q); b.onclick = () => { query = q; inp.value = q; draw(); replace('find/' + encodeURIComponent(q)); }; tr.appendChild(b); }
+      out.appendChild(tr);
+      const w = el('a', null, 'Or browse the works he quotes →'); w.href = '#works'; out.appendChild(w);
+      return;
+    }
+    out.appendChild(el('p', 'status', res.length ? (res.length === 1 ? 'One verse' : res.length + ' verses') : 'No verse found. Try fewer words, or the opening of the verse.'));
+    const ul = el('ul', 'verses'); res.slice(0, 80).forEach(v => ul.appendChild(verseRow(v, {}))); out.appendChild(ul);
+  };
+  let deb = null;
+  inp.oninput = () => { query = inp.value; draw(); clearTimeout(deb); deb = setTimeout(() => replace(query ? 'find/' + encodeURIComponent(query) : 'find'), 400); };
+  draw();
+  if (!query && matchMedia('(min-width:760px)').matches) inp.focus();
+}
+
+function viewWorks(name){
+  if (name){
+    const back = el('a', 'back', '← All works'); back.href = '#works'; wrap().appendChild(back);
+    const vs = VERSES.filter(v => v.group === name).sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true}));
+    const wd = (WORKS.find(x => x[0] === name) || [])[2];
+    const h = wrap('pagehead'); h.appendChild(el('div', 'eyebrow', 'Works quoted')); h.appendChild(nameEl('h2', null, name, wd));
+    const times = vs.reduce((n, v) => n + v.at.length, 0);
+    h.appendChild(el('p', null, (vs.length === 1 ? 'One verse' : vs.length + ' verses') + (times > vs.length ? ', chanted ' + times + ' times' : '')));
+    const ul = el('ul', 'verses wrap'); vs.forEach(v => ul.appendChild(verseRow(v, {}))); main.appendChild(ul);
+    return;
+  }
+  const h = wrap('pagehead'); h.appendChild(el('div', 'eyebrow', 'Works quoted')); h.appendChild(el('h2', null, 'The texts he quotes'));
+  h.appendChild(el('p', null, 'Most quoted first. Each opens to every verse of it chanted in these talks.'));
+  const ul = el('ul', 'worklist wrap');
+  for (const [w, n, wd] of WORKS){ const li = el('li'), a = el('a'); a.href = '#works/' + encodeURIComponent(w);
+    a.appendChild(nameEl('span', null, w, wd)); a.appendChild(el('span', 'n num', String(n))); li.appendChild(a); ul.appendChild(li); }
+  main.appendChild(ul);
+}
+
+let talkSync = null;
+function viewTalk(t, at){
+  const page = wrap('talkpage');
+  const back = el('a', 'back', '← All talks'); back.href = '#talks'; page.appendChild(back);
+  const h = el('div', 'pagehead'); page.appendChild(h);
+  h.appendChild(el('div', 'eyebrow', t.series === 'vl' ? 'Vedānta · ' + t.n + ' of 15' : 'Anugraha Bhāṣaṇam'));
+  h.appendChild(el('h2', null, t.label));
+  h.appendChild(el('p', null, [t.sub, t.date ? fmtDate(t.date) : null, JG[t.jagadguru], 'in ' + LANG[t.language], mins(t.duration)].filter(Boolean).join(' · ')));
+  const tl = el('div', 'timeline'); const tr = el('div', 'track'); tr.setAttribute('aria-hidden', 'true');
+  tr.appendChild(el('div', 'rail')); const done = el('div', 'done'); tr.appendChild(done);
+  const ticks = t.rows.map(r => { const k = el('div', 'tick' + (r.name ? '' : ' pending')); k.style.left = (100 * r.start / t.duration) + '%'; tr.appendChild(k); return k; });
+  const dot = el('div', 'head'); tr.appendChild(dot); tl.appendChild(tr);
+  const sc = el('div', 'scale num'); for (let i = 0; i <= 4; i++) sc.appendChild(el('span', null, mmss(t.duration * i / 4))); tl.appendChild(sc);
+  tr.addEventListener('pointerdown', e => { const b = tr.getBoundingClientRect(); const x = Math.min(1, Math.max(0, (e.clientX - b.left) / b.width));
+    if (Player.talk && Player.talk.key === t.key) Player.seek(x * t.duration); else Player.load(t, x * t.duration, true); });
+  page.appendChild(tl);
+  const ul = el('ul', 'verses');
+  const rows = t.rows.map(r => { const v = VERSES.find(x => x.at.some(y => y.r === r)); const li = verseRow(v, {talk: t, r}); ul.appendChild(li); return li; });
+  page.appendChild(ul);
+  let on = -1;
+  talkSync = () => {
+    if (!Player.talk || Player.talk.key !== t.key) return;
+    const s = Player.time(); let j = -1; t.rows.forEach((r, i) => { if (s >= r.start - 1) j = i; });
+    const p = 100 * s / t.duration; done.style.width = p + '%'; dot.style.left = p + '%';
+    if (j !== on){ if (on >= 0){ rows[on].classList.remove('on'); ticks[on].classList.remove('on'); }
+      on = j; if (on >= 0){ rows[on].classList.add('on'); ticks[on].classList.add('on');
+        if (Player.playing()){ const r = rows[on].getBoundingClientRect(); if (r.top < 0 || r.bottom > innerHeight) rows[on].scrollIntoView({block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); } } }
+  };
+  if (!Player.talk || Player.talk.key !== t.key) Player.load(t, at || 0, false);
+  else if (at != null) Player.seek(at);
+  if (at != null){ const j = t.rows.findIndex(r => Math.abs(r.start - at) < 1.5); if (j >= 0) setTimeout(() => rows[j].scrollIntoView({block: 'center'}), 60); }
+  talkSync();
+}
+Player.sub(() => talkSync && talkSync());
+
+function foot(){
+  const f = wrap('foot');
+  f.appendChild(el('span', null, 'Recordings published by the Śṛṅgerī maṭha. Names and times from the anukramaṇikā.'));
+}
+
+/* ================================================================ router
+   #talks · #find · #find/<query> · #works · #works/<work> · #talk/<key>[/<seconds>]
+   Each place keeps its own scroll, so coming back finds you where you were. */
+const scrolls = {};
+let here = null;
+function parse(){
+  const h = decodeURIComponent(location.hash.slice(1));
+  const [a, ...rest] = h.split('/');
+  if (a === 'find') return {view: 'find', q: rest.join('/')};
+  if (a === 'works') return {view: 'works', name: rest.join('/') || null};
+  if (a === 'talk'){ const t = TALKS.find(x => x.key === rest[0]); if (t) return {view: 'talk', t, at: rest[1] != null ? +rest[1] : null}; }
+  const q = new URLSearchParams(location.search).get('q');
+  if (q && !h) return {view: 'find', q};
+  return {view: 'talks'};
+}
+const go = path => { location.hash = path; };
+const replace = path => { history.replaceState(null, '', '#' + path); here = location.hash; };
+function render(keep){
+  const r = parse(), key = location.hash || '#talks';
+  if (here) scrolls[here] = scrollY;
+  talkSync = null; main.replaceChildren();
+  document.body.className = 'v-' + r.view;
+  document.querySelectorAll('.tab').forEach(a => a.toggleAttribute('aria-current', false));
+  const tab = document.querySelector('.tab[data-tab="' + (r.view === 'talk' ? 'talks' : r.view) + '"]'); if (tab) tab.setAttribute('aria-current', 'page');
+  if (r.view === 'find'){ if (r.q) query = r.q; viewFind(); document.title = 'Find a verse · Anukramaṇikā'; }
+  else if (r.view === 'works'){ viewWorks(r.name); document.title = (r.name ? nameIn(r.name, (WORKS.find(x => x[0] === r.name) || [])[2]) : 'Works quoted') + ' · Anukramaṇikā'; }
+  else if (r.view === 'talk'){ viewTalk(r.t, r.at); document.title = r.t.label + ' · Anukramaṇikā'; }
+  else { viewTalks(); document.title = 'Anugraha Bhāṣaṇa Anukramaṇikā'; }
+  const y = keep ? (here === key ? scrolls[key] : scrolls[key]) : scrolls[key];
+  window.scrollTo(0, r.view === 'talk' && r.at != null ? 0 : (y || 0));
+  here = key;
+}
+window.addEventListener('hashchange', () => render(false));
+
+const sel = $('script'); sel.value = script;
+sel.onchange = () => { script = sel.value; setPref('script', script); const y = scrollY; render(true); window.scrollTo(0, y); };
+
+fetch('talks.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
+  TALKS = d; index(); render(false);
+}).catch(e => { main.replaceChildren(); const p = wrap(); p.appendChild(el('p', 'status', 'The index could not be loaded (' + e.message + '). Reload the page to try again.')); });
+</script>
+</body>
+</html>
