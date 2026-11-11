@@ -26,6 +26,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      # Ubuntu ships no Devanāgarī, Tamil or Kannada font. If the pages' web
+      # font has not arrived when the harness measures, every code point is a
+      # box, far wider than shaped text: the first runs failed the preview on
+      # 55px that no reader's phone would see. Readers' devices carry these
+      # scripts; the runner should too.
+      - name: Fonts for the scripts the site shows
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-core
       # ubuntu-latest ships Google Chrome at /usr/bin/google-chrome, which the
       # harness finds on its own; CHROME is set so the run says which it used.
       - name: Check

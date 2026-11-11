@@ -91,7 +91,13 @@ main{padding-bottom:calc(var(--tabs-h) + var(--dock-h) + 28px)}
 .portrait .frame small{font-size:12px; color:var(--faint)}
 .portrait figcaption{text-align:center; color:var(--accent); font-weight:600; font-size:14.5px}
 .hero h1{margin:0; display:grid; gap:2px; text-wrap:balance}
-.hero h1 .d{font-family:var(--deva); font-size:clamp(24px,4.4vw,32px); font-weight:600; line-height:1.35}
+/* अनुग्रहभाषणानुक्रमणिका is one word with no break point. At 24px it just
+   fit a phone in the Mac's Devanāgarī font and stood 55px past the edge in
+   Linux Chrome's (the site's first CI runs), and an Android phone brings
+   fonts of its own. So it scales with the screen, about 19.5px at 390px,
+   and may break anywhere as a last resort rather than widen the page. */
+.hero > *{min-width:0}
+.hero h1 .d{font-family:var(--deva); font-size:clamp(18px,5vw,32px); font-weight:600; line-height:1.35; overflow-wrap:anywhere}
 .hero h1 .i{font-size:clamp(16px,2.6vw,19px); font-weight:600; color:var(--ink-2)}
 .hero .lede{margin:12px 0 0; font-size:15.5px; line-height:1.7; color:var(--ink-2); max-width:62ch}
 .hero .more p{margin:10px 0 0; font-size:15px; line-height:1.7; color:var(--ink-2); max-width:62ch}
