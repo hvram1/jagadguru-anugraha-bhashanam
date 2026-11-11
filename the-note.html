@@ -3724,16 +3724,6 @@ td:last-child,th:last-child{padding-right:0}
       li.hidden = v && hay.indexOf(v) === -1;
     });
   });
-
-  var btn = document.getElementById('toggle-all');
-  var all = [].slice.call(document.querySelectorAll('details.unid'));
-  var open = false;
-  btn.addEventListener('click', function(){
-    open = !open;
-    all.forEach(function(d){ d.open = open; });
-    btn.textContent = open ? 'Collapse all unidentified lists'
-                           : 'Expand all unidentified lists';
-  });
 })();
 </script>
 
