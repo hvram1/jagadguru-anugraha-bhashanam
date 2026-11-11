@@ -76,6 +76,68 @@ driving them, not by reading the CSS: no horizontal overflow in any state of
 any control, the sticky bars kept under a fifth of the screen, and tap targets
 sized by `(hover:none)` rather than by width, so a tablet gets them too.
 
+## Every check, in one command
+
+```
+here$   ./check_all.py            # the Mac gate: cases, site, pages
+here$   ./check_all.py --site     # what GitHub Actions runs on every push
+```
+
+It stops at the first failure and exits with that check's own status, so
+`2` still means *the snapshot moved and nobody has accepted it*. A missing
+sibling repository fails; it is never skipped. The three checks:
+
+| check | what it runs | needs |
+|---|---|---|
+| cases | `audio-ingest/scripts/quotes_cases.py`: 73 cases and the snapshot | audio-ingest's `build/`, which is not in git: Mac only |
+| site | `./refresh.py --check`: links resolve, counts agree | this repo |
+| pages | `purana-atlas/atlas_regress.py --repo .`: every control pressed at phone width | purana-atlas beside this repo, and Chrome (`$CHROME`, an installed Chrome, or a downloaded Chrome for Testing) |
+
+To run it before every push, once per clone:
+
+```
+here$   git config core.hooksPath .githooks
+```
+
+Not enabled yet, on purpose: the gate is red until the snapshot of
+2 November is read and accepted, and a hook that always blocks gets bypassed.
+This site has no harness baseline yet either, so controls that do nothing
+(the preview has 3) are listed but do not fail; take one with
+`atlas_regress.py --repo ../jagadguru-anugraha-bhashanam --update` once those
+three are understood.
+
+### On a real phone (not built yet)
+
+The gate prints `phone  SKIPPED`, and `--phone` fails, until this exists. The
+plan, agreed 2026-11-11:
+
+- **The phone runs the harness's own script.** The harness injects a script
+  into a copy of each page, and that script presses the controls and measures.
+  In phone mode the harness's server listens on the Mac's Tailscale address,
+  port 8000 (already allowed), and the script POSTs its report back instead of
+  writing it into the page for headless Chrome to read.
+- **One start page** walks the phone through every page and then the
+  deep-link addresses, so one tap runs the whole site.
+- **At the phone's real width**: skip the 390 px iframe the Mac uses, because
+  headless Chrome will not make a narrow window.
+- **What it adds**: Android Chrome's real viewport and address bar, the player
+  bootstrap on a real phone, and how One UI's fonts render Devanāgarī, Tamil
+  and Kannada. **What it does not**: real touch; controls are pressed with
+  `click()`.
+- **Nothing on the phone but Tailscale and a browser.** Keep the screen on
+  for the run (Android pauses scripts when it locks); it runs in real time.
+- **Both browsers**: Chrome, and Samsung Internet, the default on the
+  Galaxy M47, which many readers will use.
+- **adb, later, only to automate it**: `brew install --cask
+  android-platform-tools`; on the phone, Developer options → Wireless
+  debugging, and Auto Blocker off (Settings → Security and privacy), which
+  otherwise blocks adb silently. Then `am start -d <url>` per browser
+  (`com.android.chrome`, `com.sec.android.app.sbrowser`) and `screencap` for
+  a picture of each page. If wireless debugging refuses the Tailscale
+  address, `adb tcpip 5555` once over USB.
+- **Driving the phone's Chrome over adb with real taps** (DevTools forwarded
+  to the Mac) is the next step after that, only if click() proves not enough.
+
 ## What this is not
 
 A working measurement made from recordings published on the Sringeri maṭha's

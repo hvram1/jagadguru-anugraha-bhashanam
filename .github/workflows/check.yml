@@ -1,0 +1,35 @@
+name: Check the site
+
+# The half of check_all.py that needs only this repo and the page harness:
+# links and counts (refresh.py --check), and every page driven at phone width
+# in headless Chrome (purana-atlas/atlas_regress.py). The rule cases need
+# audio-ingest's build/, which is not in git; they run in the Mac gate.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: jagadguru-anugraha-bhashanam
+      # The harness lives in purana-atlas. Checked out as a sibling, never
+      # inside this repo: the harness treats every .html under --repo as a page.
+      - uses: actions/checkout@v4
+        with:
+          repository: hvram1/purana-atlas
+          path: purana-atlas
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # ubuntu-latest ships Google Chrome at /usr/bin/google-chrome, which the
+      # harness finds on its own; CHROME is set so the run says which it used.
+      - name: Check
+        working-directory: jagadguru-anugraha-bhashanam
+        env:
+          CHROME: /usr/bin/google-chrome
+        run: python check_all.py --site
