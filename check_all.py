@@ -48,8 +48,22 @@ def step(name, argv, cwd, needs):
     shown = [os.path.relpath(x, cwd) if os.path.isabs(x) and x.startswith(UP) else x
              for x in argv]
     print('$ (cd %s && %s)' % (os.path.relpath(cwd, UP), ' '.join(shown)), flush=True)
-    rc = subprocess.call(argv, cwd=cwd)
+    # Output is passed through line by line. Under GitHub Actions each FAIL
+    # line is also raised as an annotation: a job's log needs admin rights to
+    # read through the API, its annotations do not, so the reason a run went
+    # red can be read by anyone, not just found by opening the page.
+    gha = os.environ.get('GITHUB_ACTIONS') == 'true'
+    p = subprocess.Popen(argv, cwd=cwd, stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT, text=True, bufsize=1)
+    for line in p.stdout:
+        sys.stdout.write(line)
+        if gha and line.lstrip().startswith('FAIL'):
+            print('::error title=check_all %s::%s' % (name, line.strip()[:900]))
+    rc = p.wait()
+    sys.stdout.flush()
     print('%s  %s (exit %d)' % ('ok  ' if rc == 0 else 'FAIL', name, rc))
+    if gha and rc:
+        print('::error title=check_all::%s failed (exit %d)' % (name, rc))
     return rc
 
 
